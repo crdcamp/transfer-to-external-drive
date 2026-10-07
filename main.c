@@ -79,10 +79,9 @@ char *concatenate_external_drive_path(char *volumes_path, char *external_drive_n
 
 // Transfer the contents of the `input` directory into the external drive.
 int transfer_input_to_external_drive(char *input_directory_path, char *external_drive_path) {
-    printf("Copying files from: `%s` to `%s`\n", input_directory_path, external_drive_path);
     // Define bash arguments for copying
-    char *cp = "cp -r ";
-    char *wildcard = "/* ";
+    char *cp = "rsync -a -h --progress ";
+    char *wildcard = "/ ";
 
     // Allocate buffer for command
     char *command = malloc(strlen(cp) + strlen(input_directory_path) + strlen(wildcard) + strlen(external_drive_path) + 1);
