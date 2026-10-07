@@ -14,6 +14,8 @@ clang main.c -o main
 
 Incredibly simple. Just run the script with the only argument being the name of your external drive.
 
+**Note** that you will have to adjust `input_directory_path` found in `main.c` to get the desired source for your files. 
+
 ```bash
 ./main <name-of-external-drive>
 ```
