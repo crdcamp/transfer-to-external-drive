@@ -29,7 +29,7 @@ int main(int argc, char *argv[]) {
     printf("External drive path: %s\n", external_drive_path);
     int external_drive_existence_check = check_if_directory_exists(external_drive_path);
     if (external_drive_existence_check != 0) {
-        printf("Error: The specified external drive not found. Please ensure you are inputting the correct name and that the external drive is connected\n");
+        printf("Error: The external drive was not found. Please ensure you are inputting the correct name and that the external drive is connected\n");
         return 1;
     }
 
@@ -62,7 +62,7 @@ char *concatenate_external_drive_path(char *volumes_path, char *external_drive_n
     // Buffer for external drive file path
     char *external_drive_path = malloc(strlen(volumes_path) + strlen(external_drive_name) + 1);
     if (external_drive_path == NULL) {
-        printf("Error allocating memory for external drive path buffer\n");
+        printf("Error: Could not allocate memory for external drive name buffer\n");
         return NULL;
     }
 
@@ -75,19 +75,23 @@ char *concatenate_external_drive_path(char *volumes_path, char *external_drive_n
 
 // Transfer the contents of the `Research` directory into the external drive.
 int transfer_research_to_external_drive(char *research_directory_path, char *external_drive_path) {
-    // Calculate buffer size of command
+    // Define bash arguments for copying
     char *cp = "cp -r ";
     char *wildcard = "* ";
 
-    size_t command_buffer = strlen(cp) + strlen(research_directory_path) + strlen(wildcard) + strlen(external_drive_path);
+    size_t command_size = strlen(cp) + strlen(research_directory_path) + strlen(wildcard) + strlen(external_drive_path);
     // Allocate buffer for command
-    char *command = malloc(command_buffer);
+    char *command = malloc(command_size);
     if (command == NULL) {
         printf("Error: Could not allocate memory for command line buffer\n");
         return 1;
     }
-    // Concatenate and use the command
-    system("cd %s");
+    // Concatenate the command strings to pass them to a `system` argument
+    strcpy(command, cp);
+    strcpy(command, research_directory_path);
+    strcpy(command, wildcard);
+    strcpy(command, external_drive_path);
+    printf("Resulting command: %s\n", command);
 
     free(command);
 
