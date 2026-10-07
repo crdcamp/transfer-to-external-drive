@@ -15,5 +15,5 @@ clang main.c -o main
 Incredibly simple. Just run the script with the only argument being the name of your external drive.
 
 ```bash
-./main <path-to-external-drive>
+./main <name-of-external-drive>
 ```
