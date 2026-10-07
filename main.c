@@ -14,7 +14,7 @@ int main(int argc, char *argv[]) {
     }
 
     // Define your research directory to copy to the external drive and confirm if it exists
-    char *research_directory_path = "~/Desktop/Testing";
+    char *research_directory_path = "/Users/christiancamp/Desktop/Testing";
     int research_directory_existence_check = check_if_directory_exists(research_directory_path);
     if (research_directory_existence_check != 0) {
         printf("Error: The specified research directory was not found. Please ensure the directory exist\n");
@@ -33,7 +33,7 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
-    // Transfer the contents of the research directory into the external drive
+    // Copy the contents of the research directory into the external drive
     int result = transfer_research_to_external_drive(research_directory_path, external_drive_path);
     if (result != 0) {
         return 1;
@@ -77,7 +77,7 @@ char *concatenate_external_drive_path(char *volumes_path, char *external_drive_n
 int transfer_research_to_external_drive(char *research_directory_path, char *external_drive_path) {
     // Define bash arguments for copying
     char *cp = "cp -r ";
-    char *wildcard = "* ";
+    char *wildcard = "/* ";
 
     size_t command_size = strlen(cp) + strlen(research_directory_path) + strlen(wildcard) + strlen(external_drive_path);
     // Allocate buffer for command
@@ -86,11 +86,16 @@ int transfer_research_to_external_drive(char *research_directory_path, char *ext
         printf("Error: Could not allocate memory for command line buffer\n");
         return 1;
     }
-    // Concatenate the command strings to pass them to a `system` argument
+    // Copy the strings into the buffer
     strcpy(command, cp);
-    strcpy(command, research_directory_path);
-    strcpy(command, wildcard);
-    strcpy(command, external_drive_path);
+    strcat(command, research_directory_path);
+    // strcpy(command, wildcard);
+    // strcpy(command, external_drive_path);
+
+    // Concatenate for use by `system` call
+    strcat(command, wildcard);
+    strcat(command, external_drive_path);
+
     printf("Resulting command: %s\n", command);
 
     free(command);
