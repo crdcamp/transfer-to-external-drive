@@ -39,7 +39,7 @@ int main(int argc, char *argv[]) {
 }
 
 // Check if the input directory exists.
-// Returns 0 if the path is a directory and exists. Otherwise, return 1
+// Returns 0 if the path is a directory and exists. Otherwise, return 1.
 int check_if_directory_exists(const char *external_drive_path) {
     struct stat stats;
     if (stat(external_drive_path, &stats) == 0 && S_ISDIR(stats.st_mode)) {
@@ -50,8 +50,8 @@ int check_if_directory_exists(const char *external_drive_path) {
     }
 }
 
-// Concatenate the user's external drive's name parameter to create
-// the external drive's file path
+// Concatenate the user's input (the name of their external drive) with the
+// path to the external drive's directory.
 char *concatenate_external_drive_path(const char *volumes_path, const char *external_drive_name) {
     // Buffer size for external drive file path
     size_t external_drive_path_size = strlen(volumes_path) + strlen(external_drive_name) + 1;
@@ -69,7 +69,7 @@ char *concatenate_external_drive_path(const char *volumes_path, const char *exte
     return external_drive_path;
 }
 
-// Transfer the contents of the `Research` directory into an external drive
+// Transfer the contents of the `Research` directory into the external drive.
 void transfer_research_to_external_drive(char *research_directory_path, char *external_drive_path) {
     printf("Meow\n");
 }
