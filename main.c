@@ -3,8 +3,8 @@
 #include <stdlib.h>
 #include <sys/stat.h>
 
+int check_if_directory_exists(const char *external_drive_path);
 char *concatenate_external_drive_path(const char *volumes_path, const char *external_drive_name);
-int check_if_external_drive_exists(const char *external_drive_path);
 void transfer_research_to_external_drive(char *research_directory_path, char *external_drive_path);
 
 int main(int argc, char *argv[]) {
@@ -14,8 +14,12 @@ int main(int argc, char *argv[]) {
     }
 
     // Define your research directory to copy to the external drive
-    // (deliberately hard coded to keep things simple with one argument)
     const char *research_directory_path = "~/Desktop/Research";
+    int research_directory_existence_check = check_if_directory_exists(research_directory_path);
+    if (research_directory_existence_check != 0) {
+        printf("Error: The specified research directory was not found. Please ensure the directory exist\n");
+        return 1;
+    }
 
     // External drive path concatenation and path definition
     char *external_drive_path = concatenate_external_drive_path("/Volumes/", argv[1]);
@@ -23,9 +27,7 @@ int main(int argc, char *argv[]) {
         return 1;
     }
     printf("External drive path: %s\n", external_drive_path);
-
-    // Determine if the external drive exists
-    int external_drive_existence_check = check_if_external_drive_exists(external_drive_path);
+    int external_drive_existence_check = check_if_directory_exists(external_drive_path);
     if (external_drive_existence_check != 0) {
         printf("Error: The specified external drive not found. Please ensure you are inputting the correct name and that the external drive is connected\n");
         return 1;
@@ -34,6 +36,18 @@ int main(int argc, char *argv[]) {
     free(external_drive_path);
 
     return 0;
+}
+
+// Check if the input directory exists.
+// Returns 0 if the path is a directory and exists. Otherwise, return 1
+int check_if_directory_exists(const char *external_drive_path) {
+    struct stat stats;
+    if (stat(external_drive_path, &stats) == 0 && S_ISDIR(stats.st_mode)) {
+        return 0;
+    }
+    else {
+        return 1;
+    }
 }
 
 // Concatenate the user's external drive's name parameter to create
@@ -48,26 +62,14 @@ char *concatenate_external_drive_path(const char *volumes_path, const char *exte
         return NULL;
     }
 
-    // Concatenate volumes path with external drive name
+    // Concatenate the volumes path with the external drive's name
     strcpy(external_drive_path, volumes_path);
     strcat(external_drive_path, external_drive_name);
 
     return external_drive_path;
 }
 
-// Check if the external drive exists.
-// Returns 0 if the path is a directory and exists. Otherwise, return 1
-int check_if_external_drive_exists(const char *external_drive_path) {
-    struct stat stats;
-    if (stat(external_drive_path, &stats) == 0 && S_ISDIR(stats.st_mode)) {
-        return 0;
-    }
-    else {
-        return 1;
-    }
-}
-
 // Transfer the contents of the `Research` directory into an external drive
 void transfer_research_to_external_drive(char *research_directory_path, char *external_drive_path) {
-    printf("Not implemented\n");
+    printf("Meow\n");
 }
