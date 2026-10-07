@@ -5,19 +5,20 @@
 
 int check_if_directory_exists(char *external_drive_path);
 char *concatenate_external_drive_path(char *volumes_path, char *external_drive_name);
-int transfer_research_to_external_drive(char *research_directory_path, char *external_drive_path);
+int transfer_input_to_external_drive(char *input_directory_path, char *external_drive_path);
 
 int main(int argc, char *argv[]) {
     // Input argument validation. Only accepts one argument: The name of the external drive
     if (argc != 2) {
-        printf("Error: expected one argument - the external drive's name as shown in Finder\nUsage: %s <name-of-external-drive>\n", argv[0]);
+        printf("Error: Expected one argument, the external drive's name as shown in Finder\nUsage: %s <name-of-external-drive>\n", argv[0]);
+        return 1;
     }
 
-    // Define your research directory to copy to the external drive and confirm if it exists
-    char *research_directory_path = "/Users/christiancamp/Desktop/Testing";
-    int research_directory_existence_check = check_if_directory_exists(research_directory_path);
-    if (research_directory_existence_check != 0) {
-        printf("Error: The specified research directory was not found. Please ensure the directory exist\n");
+    // Define your input directory to copy to the external drive and confirm if it exists
+    char *input_directory_path = "/Users/christiancamp/Documents/External";
+    int input_directory_existence_check = check_if_directory_exists(input_directory_path);
+    if (input_directory_existence_check != 0) {
+        printf("Error: The specified input directory was not found. Please ensure the directory exist\n");
         return 1;
     }
 
@@ -33,8 +34,8 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
-    // Copy the contents of the research directory into the external drive
-    int result = transfer_research_to_external_drive(research_directory_path, external_drive_path);
+    // Copy the contents of the input directory into the external drive
+    int result = transfer_input_to_external_drive(input_directory_path, external_drive_path);
     if (result != 0) {
         return 1;
     }
@@ -73,32 +74,31 @@ char *concatenate_external_drive_path(char *volumes_path, char *external_drive_n
     return external_drive_path;
 }
 
-// Transfer the contents of the `Research` directory into the external drive.
-int transfer_research_to_external_drive(char *research_directory_path, char *external_drive_path) {
+// Transfer the contents of the `input` directory into the external drive.
+int transfer_input_to_external_drive(char *input_directory_path, char *external_drive_path) {
+    printf("Copying files from: `%s` to `%s`\n", input_directory_path, external_drive_path);
     // Define bash arguments for copying
     char *cp = "cp -r ";
     char *wildcard = "/* ";
 
-    size_t command_size = strlen(cp) + strlen(research_directory_path) + strlen(wildcard) + strlen(external_drive_path);
     // Allocate buffer for command
-    char *command = malloc(command_size);
+    char *command = malloc(strlen(cp) + strlen(input_directory_path) + strlen(wildcard) + strlen(external_drive_path) + 1);
     if (command == NULL) {
         printf("Error: Could not allocate memory for command line buffer\n");
         return 1;
     }
-    // Copy the strings into the buffer
-    strcpy(command, cp);
-    strcat(command, research_directory_path);
-    // strcpy(command, wildcard);
-    // strcpy(command, external_drive_path);
 
-    // Concatenate for use by `system` call
+    // Copy and concatenate the strings into the buffer
+    strcpy(command, cp);
+    strcat(command, input_directory_path);
     strcat(command, wildcard);
     strcat(command, external_drive_path);
 
-    printf("Resulting command: %s\n", command);
-
+    // Call the command and free the memory
+    system(command);
     free(command);
+
+    printf("Files successfully copied\n");
 
     return 0;
 }
