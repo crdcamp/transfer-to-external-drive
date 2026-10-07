@@ -25,18 +25,21 @@ int main(int argc, char *argv[]) {
     // External drive path concatenation, path definition, and existence check
     char *external_drive_path = concatenate_external_drive_path("/Volumes/", argv[1]);
     if (external_drive_path == NULL) {
+        free(external_drive_path);
         return 1;
     }
     printf("External drive path: %s\n", external_drive_path);
     int external_drive_existence_check = check_if_directory_exists(external_drive_path);
     if (external_drive_existence_check != 0) {
         printf("Error: The external drive was not found. Please ensure you are inputting the correct name and that the external drive is connected\n");
+        free(external_drive_path);
         return 1;
     }
 
     // Copy the contents of the input directory into the external drive
     int result = transfer_input_to_external_drive(input_directory_path, external_drive_path);
     if (result != 0) {
+        free(external_drive_path);
         return 1;
     }
 
