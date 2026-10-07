@@ -19,8 +19,8 @@ int main(int argc, char *argv[]) {
     const char *external_drive_name = argv[1];
 
     // Combine file paths
-    size_t external_drive_path_size = strlen(volumes_path) + strlen(external_drive_name) + 1; // Buffer for full file path
-    char *external_drive_path = malloc(external_drive_path_size);
+    size_t external_drive_path_size = strlen(volumes_path) + strlen(external_drive_name) + 1; // Buffer size for external drive file path
+    char *external_drive_path = malloc(external_drive_path_size); // Buffer for external drive file path
 
 
     printf("Research path: %s\n", research_directory_path);
