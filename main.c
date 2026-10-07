@@ -1,9 +1,10 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <sys/stat.h>
 
-void check_if_external_drive_exists(void);
-char *concatenate_external_drive_file_paths(const char *volumes_path, const char *external_drive_name);
+char *concatenate_external_drive_paths(const char *volumes_path, const char *external_drive_name);
+int check_if_external_drive_exists(const char *external_drive_file_path);
 void transfer_research_to_external_drive(char *research_directory_path, char *external_drive_path);
 
 int main(int argc, char *argv[]) {
@@ -15,8 +16,14 @@ int main(int argc, char *argv[]) {
     // Path handling
     const char *research_directory_path = "/Users/christiancamp/Desktop";
     const char *external_drive_name = argv[1];
-    char *external_drive_path = concatenate_external_drive_file_paths("/Volumes/", external_drive_name);
+    char *external_drive_path = concatenate_external_drive_paths("/Volumes/", external_drive_name);
     if (external_drive_path == NULL) {
+        return 1;
+    }
+
+    int external_drive_check = check_if_external_drive_exists(external_drive_path);
+    if (external_drive_check != 0) {
+        printf("Error: External drive not found. Please double check the drive's name in Finder and if it's connected to your Mac\n");
         return 1;
     }
 
@@ -27,15 +34,9 @@ int main(int argc, char *argv[]) {
     return 0;
 }
 
-// Transfer the contents of the `Research` directory into
-// an external drive
-void transfer_research_to_external_drive(char *research_directory_path, char *external_drive_path) {
-    printf("Not implemented\n");
-}
-
 // Concatenate the user's external drive's name parameter to create
 // the external drive's file path
-char *concatenate_external_drive_file_paths(const char *volumes_path, const char *external_drive_name) {
+char *concatenate_external_drive_paths(const char *volumes_path, const char *external_drive_name) {
     // Buffer size for external drive file path
     size_t external_drive_path_size = strlen(volumes_path) + strlen(external_drive_name) + 1;
     // Buffer for external drive file path
@@ -50,4 +51,19 @@ char *concatenate_external_drive_file_paths(const char *volumes_path, const char
     strcat(external_drive_path, external_drive_name);
 
     return external_drive_path;
+}
+
+// Check if the external drive exists
+int check_if_external_drive_exists(const char *external_drive_file_path) {
+    struct stat stats;
+
+    if (stat(external_drive_file_path, &stats) != 0) {
+        return 1;
+    }
+    return S_ISDIR(stats.st_mode);
+}
+
+// Transfer the contents of the `Research` directory into an external drive
+void transfer_research_to_external_drive(char *research_directory_path, char *external_drive_path) {
+    printf("Not implemented\n");
 }
