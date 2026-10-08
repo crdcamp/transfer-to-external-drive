@@ -80,20 +80,20 @@ char *concatenate_external_drive_path(char *volumes_path, char *external_drive_n
 // Transfer the contents of the `input` directory into the external drive.
 int transfer_input_to_external_drive(char *input_directory_path, char *external_drive_path) {
     // Define bash arguments for copying
-    char *cp = "rsync -a -h --progress ";
-    char *wildcard = "/ ";
+    char *rsync = "rsync -a -h --progress ";
+    char *slash = "/ ";
 
     // Allocate buffer for command
-    char *command = malloc(strlen(cp) + strlen(input_directory_path) + strlen(wildcard) + strlen(external_drive_path) + 1);
+    char *command = malloc(strlen(rsync) + strlen(input_directory_path) + strlen(slash) + strlen(external_drive_path) + 1);
     if (command == NULL) {
         printf("Error: Could not allocate memory for command line buffer\n");
         return 1;
     }
 
     // Copy and concatenate the strings into the buffer
-    strcpy(command, cp);
+    strcpy(command, rsync);
     strcat(command, input_directory_path);
-    strcat(command, wildcard);
+    strcat(command, slash);
     strcat(command, external_drive_path);
 
     // Call the command and free the memory
