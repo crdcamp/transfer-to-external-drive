@@ -15,6 +15,7 @@ int main(int argc, char *argv[]) {
     }
 
     // Define your input directory to copy to the external drive and confirm if it exists
+    // need to surround file paths in quotes
     char *input_directory_path = "/Users/christiancamp/Documents/External";
     int input_directory_existence_check = check_if_directory_exists(input_directory_path);
     if (input_directory_existence_check != 0) {
@@ -84,6 +85,8 @@ int transfer_input_to_external_drive(char *input_directory_path, char *external_
     char *slash = "/ ";
 
     // Allocate buffer for command
+    // convert the command to an array and allocate
+    // memory using a loop instead
     char *command = malloc(strlen(rsync) + strlen(input_directory_path) + strlen(slash) + strlen(external_drive_path) + 1);
     if (command == NULL) {
         printf("Error: Could not allocate memory for command line buffer\n");
@@ -97,6 +100,7 @@ int transfer_input_to_external_drive(char *input_directory_path, char *external_
     strcat(command, external_drive_path);
 
     // Call the command and free the memory
+    // Add check for successful sys call
     system(command);
     free(command);
 
