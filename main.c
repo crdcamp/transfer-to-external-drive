@@ -8,28 +8,32 @@ char *concatenate_external_drive_path(char *volumes_path, char *external_drive_n
 int transfer_input_to_external_drive(char *input_directory_path, char *external_drive_path);
 
 int main(int argc, char *argv[]) {
-    // Input argument validation. Only accepts one argument: The name of the external drive
     if (argc != 2) {
         printf("Error: Expected one argument (the external drive's name as shown in Finder)\nUsage: %s <name-of-external-drive>\n", argv[0]);
         return 1;
     }
 
-    // Define your input directory to copy to the external drive and confirm if it exists
-    // need to surround file paths in quotes
-    char *input_directory_path = "/Users/christiancamp/Documents/External";
-    int input_directory_existence_check = check_if_directory_exists(input_directory_path);
-    if (input_directory_existence_check != 0) {
-        printf("Error: The specified input directory was not found. Please ensure the directory exist\n");
-        return 1;
+    // Define your input directories to copy to the external drive and confirm if they
+    // NEED TO SURROUND FILE PATHS IN QUOTES
+    char *input_directory_paths[] = {"/Users/christiancamp/Documents/External", "/Users/christiancamp/Desktop/Code"};
+    int input_array_len = sizeof(input_directory_paths) / sizeof(input_directory_paths[0]);
+    for (int i = 0; i < input_array_len; i++) {
+        int input_directory_existence_check = check_if_directory_exists(input_directory_paths[i]);
+        if (input_directory_existence_check != 0) {
+            printf("Error: The specified input directory was not found. Please ensure the directory exist\n");
+            return 1;
+        }
     }
 
-    // External drive path concatenation, path definition, and existence check
+    // Concatenate external drive name with path to external drives
     char *external_drive_path = concatenate_external_drive_path("/Volumes/", argv[1]);
     if (external_drive_path == NULL) {
         free(external_drive_path);
         return 1;
     }
     printf("External drive path: %s\n", external_drive_path);
+
+    // Check if the external drive exists
     int external_drive_existence_check = check_if_directory_exists(external_drive_path);
     if (external_drive_existence_check != 0) {
         printf("Error: The external drive was not found. Please ensure you are inputting the correct name and that the external drive is connected\n");
@@ -38,10 +42,13 @@ int main(int argc, char *argv[]) {
     }
 
     // Copy the contents of the input directory into the external drive
-    int result = transfer_input_to_external_drive(input_directory_path, external_drive_path);
-    if (result != 0) {
-        free(external_drive_path);
-        return 1;
+    for (int i = 0; i < input_array_len; i++) {
+        int result = transfer_input_to_external_drive(input_directory_paths[i], external_drive_path);
+        if (result != 0) {
+            free(external_drive_path);
+            return 1;
+        }
+
     }
 
     free(external_drive_path);
@@ -82,12 +89,12 @@ char *concatenate_external_drive_path(char *volumes_path, char *external_drive_n
 int transfer_input_to_external_drive(char *input_directory_path, char *external_drive_path) {
     // Define bash arguments for copying
     char *rsync = "rsync -a -h --progress ";
-    char *slash = "/ ";
+    char *space = " ";
 
     // Allocate buffer for command
-    // convert the command to an array and allocate
-    // memory using a loop instead
-    char *command = malloc(strlen(rsync) + strlen(input_directory_path) + strlen(slash) + strlen(external_drive_path) + 1);
+    // CONVERT THE COMMAND TO AN ARRAY AND ITERATE OVER
+    // IT INSTEAD OF ALLOCATING MEMORY
+    char *command = malloc(strlen(rsync) + strlen(input_directory_path) + strlen(space) + strlen(external_drive_path) + 1);
     if (command == NULL) {
         printf("Error: Could not allocate memory for command line buffer\n");
         return 1;
@@ -96,15 +103,16 @@ int transfer_input_to_external_drive(char *input_directory_path, char *external_
     // Copy and concatenate the strings into the buffer
     strcpy(command, rsync);
     strcat(command, input_directory_path);
-    strcat(command, slash);
+    strcat(command, space);
     strcat(command, external_drive_path);
 
     // Call the command and free the memory
-    // Add check for successful sys call
+    // ADD CHECK FOR SUCCESSFUL/UNSUCCESSFUL SYSTEM CALL
+    // Otherwise, this print statement is meaningless
     system(command);
     free(command);
 
-    printf("Files successfully copied\n");
+    printf("Files for directory `%s` successfully copied\n", input_directory_path);
 
     return 0;
 }
