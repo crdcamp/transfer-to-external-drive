@@ -15,7 +15,7 @@ int main(int argc, char *argv[]) {
 
     // Define your input directories to copy to the external drive and confirm if they
     // NEED TO SURROUND FILE PATHS IN QUOTES
-    char *input_directory_paths[] = {"/Users/christiancamp/Documents/External", "/Users/christiancamp/Desktop/Code"};
+    char *input_directory_paths[] = {"/Users/christiancamp/Documents", "/Users/christiancamp/Desktop/Code"};
     int input_array_len = sizeof(input_directory_paths) / sizeof(input_directory_paths[0]);
     for (int i = 0; i < input_array_len; i++) {
         int input_directory_existence_check = check_if_directory_exists(input_directory_paths[i]);
