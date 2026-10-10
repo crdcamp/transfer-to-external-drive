@@ -10,7 +10,7 @@ int transfer_input_to_external_drive(char *input_directory_path, char *external_
 int main(int argc, char *argv[]) {
     // Input argument validation. Only accepts one argument: The name of the external drive
     if (argc != 2) {
-        printf("Error: Expected one argument, the external drive's name as shown in Finder\nUsage: %s <name-of-external-drive>\n", argv[0]);
+        printf("Error: Expected one argument (the external drive's name as shown in Finder)\nUsage: %s <name-of-external-drive>\n", argv[0]);
         return 1;
     }
 
