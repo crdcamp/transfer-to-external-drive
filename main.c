@@ -31,7 +31,6 @@ int main(int argc, char *argv[]) {
         free(external_drive_path);
         return 1;
     }
-    printf("External drive path: %s\n", external_drive_path);
 
     // Check if the external drive exists
     int external_drive_existence_check = check_if_directory_exists(external_drive_path);
@@ -48,7 +47,6 @@ int main(int argc, char *argv[]) {
             free(external_drive_path);
             return 1;
         }
-
     }
 
     free(external_drive_path);
@@ -88,31 +86,30 @@ char *concatenate_external_drive_path(char *volumes_path, char *external_drive_n
 // Transfer the contents of the `input` directory into the external drive.
 int transfer_input_to_external_drive(char *input_directory_path, char *external_drive_path) {
     // Define bash arguments for copying
-    char *rsync = "rsync -a -h --progress ";
-    char *space = " ";
+    char *command_array[] = {"rsync -a -h --progress ", input_directory_path, " ", external_drive_path};
 
-    // Allocate buffer for command
-    // CONVERT THE COMMAND TO AN ARRAY AND ITERATE OVER
-    // IT INSTEAD OF ALLOCATING MEMORY
-    char *command = malloc(strlen(rsync) + strlen(input_directory_path) + strlen(space) + strlen(external_drive_path) + 1);
-    if (command == NULL) {
-        printf("Error: Could not allocate memory for command line buffer\n");
-        return 1;
+    // THIS COULD ALL BE REPLACED WITH `snprintf`
+
+    // Calculate memory size needed to pass command to `system()`
+    int command_array_len = sizeof(command_array) / sizeof(command_array[0]);
+    size_t command_size = 1;
+    for (int i = 0; i < command_array_len; i++) {
+        command_size += (strlen(command_array[i]));
     }
 
-    // Copy and concatenate the strings into the buffer
-    strcpy(command, rsync);
-    strcat(command, input_directory_path);
-    strcat(command, space);
-    strcat(command, external_drive_path);
+    // Allocate memory, insert commands, and make a system call
+    char *command = malloc(command_size);
+    strcpy(command, command_array[0]);
+    for (int i = 1; i < command_array_len; i++) {
+        strcat(command, command_array[i]);
+    }
 
-    // Call the command and free the memory
-    // ADD CHECK FOR SUCCESSFUL/UNSUCCESSFUL SYSTEM CALL
-    // Otherwise, this print statement is meaningless
+    // NEED TO CHECK THE RETURN CODE OF THIS FUNCTION, Otherwise
+    // the print statement is meaningless
     system(command);
-    free(command);
-
     printf("Files for directory `%s` successfully copied\n", input_directory_path);
+
+    free(command);
 
     return 0;
 }
