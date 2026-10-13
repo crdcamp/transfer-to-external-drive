@@ -7,6 +7,8 @@ int check_if_directory_exists(char *external_drive_path);
 char *concatenate_external_drive_path(char *volumes_path, char *external_drive_name);
 int transfer_input_to_external_drive(char *input_directory_path, char *external_drive_path);
 
+// Copy the contents of any number of desired folders to an external drive
+// by passing the external drive's name as a parameter
 int main(int argc, char *argv[]) {
     if (argc != 2) {
         printf("Error: Expected one argument (the external drive's name as shown in Finder)\nUsage: %s <name-of-external-drive>\n", argv[0]);
@@ -89,6 +91,8 @@ int transfer_input_to_external_drive(char *input_directory_path, char *external_
     char *command_array[] = {"rsync -a -h --progress ", input_directory_path, " ", external_drive_path};
 
     // THIS COULD ALL BE REPLACED WITH `snprintf`
+    // ... but I kinda like how fun this part was to make
+    // so I'll probably keep it
 
     // Calculate memory size needed to pass command to `system()`
     int command_array_len = sizeof(command_array) / sizeof(command_array[0]);
