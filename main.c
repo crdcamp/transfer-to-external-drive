@@ -1,3 +1,4 @@
+#include <stddef.h>
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -90,29 +91,29 @@ int transfer_input_to_external_drive(char *input_directory_path, char *external_
     // Define bash arguments for copying
     char *command_array[] = {"rsync -a -h --progress ", input_directory_path, " ", external_drive_path};
 
-    // THIS COULD ALL BE REPLACED WITH `snprintf`
-    // ... but I kinda like how fun this part was to make
-    // so I'll probably keep it
-
-    // Calculate memory size needed to pass command to `system()`
+    // Calculate memory size needed to pass command string to `system()` call
     int command_array_len = sizeof(command_array) / sizeof(command_array[0]);
     size_t command_size = 1;
     for (int i = 0; i < command_array_len; i++) {
         command_size += (strlen(command_array[i]));
     }
 
-    // Allocate memory, insert commands, and make a system call
+    // Allocate memory, insert commands, and make a system call to
+    // copy the contents of the input directory
     char *command = malloc(command_size);
+    if (command == NULL) {
+        printf("Fatal: Error allocating memory for `command` string. Exiting\n");
+        exit(1);
+    }
     strcpy(command, command_array[0]);
     for (int i = 1; i < command_array_len; i++) {
         strcat(command, command_array[i]);
     }
 
-    // NEED TO CHECK THE RETURN CODE OF THIS FUNCTION, Otherwise
-    // the print statement is meaningless
+    // Need a check for the return code of this function. Otherwise,
+    // this print statement is meaningless
     system(command);
     printf("Files for directory `%s` successfully copied\n", input_directory_path);
-
     free(command);
 
     return 0;
