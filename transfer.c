@@ -87,6 +87,7 @@ char *concatenate_external_drive_path(char *volumes_path, char *external_drive_n
 }
 
 // Transfer the contents of the `input` directory into the external drive.
+// THESE FILE PATH ARGUMENTS SHOULD BE LIMITED IN THEIR LENGTH (not super important, but definitely a better practice)
 int transfer_input_to_external_drive(char *input_directory_path, char *external_drive_path) {
     // Define bash arguments for copying
     char *command_array[] = {"rsync -a -h --progress ", input_directory_path, " ", external_drive_path};
